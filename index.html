@@ -1,0 +1,75 @@
+<html>
+<head>
+<meta name="theme-color" content="#000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+	margin: 0;
+	font-family: sans-serif;
+}
+::-webkit-scrollbar {
+    display:none;
+}
+#container {
+	scroll-snap-type: y mandatory;
+	overflow: scroll;
+	height: 100%;
+}
+.video {
+	height: 100%;
+	scroll-snap-align: start;
+	scroll-snap-stop: always;	
+	background: #111;
+}
+.video video {
+	height: 100%;
+	width: 100%;
+	background: #111;
+}
+#prompt {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	background: black;
+	height: 100%;
+	width: 100%;
+	color: white;
+	font-size: 24px;
+}
+#prompt div {
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 100%;
+	text-align: center;
+}
+#prompt button {
+	border-radius: 5px;
+	background: #C70039;
+	color: white;
+	border: 0;
+	padding: 5px;
+	width: 50%;
+	font-size: 48px;
+}
+input {
+	margin-bottom: 10px;
+	width: 80%;
+	font-size: 24px;
+}
+</style>
+</head>
+<body>
+<div id="container">
+</div>
+<div id="prompt">
+<div>
+<input type="text" id="tags"><br>
+<button onclick="window.location.href='e6.html?tags='+document.getElementById('tags').value">Go E6</button>
+<!--button onclick="window.location.href='r3.html?tags='+document.getElementById('tags').value">Go R3</button-->
+</div>
+</div>
+</body>
+</html>
