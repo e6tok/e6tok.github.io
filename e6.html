@@ -127,6 +127,8 @@
 		let lastPlayed = 0;
 		let page = 0;
 
+		const randSeed = Math.floor(Math.random() * 10000000000000000);
+
 		videoContainer.addEventListener('scroll', checkScroll, false);
 		videoContainer.addEventListener('resize', checkScroll, false);
 		player.addEventListener('timeupdate', timeUpdate, false);
@@ -134,7 +136,7 @@
 		async function queryAPI(page, tags) {
 			const urlParams = new URLSearchParams(window.location.search);
 
-			const data = await (await fetch('https://e621.net/posts.json?tags='+(urlParams.get('tags') ?? '')+' -gore%20-scat%20-watersports%20-young%20-loli%20-shota%20type:webm%20-rating:safe&limit=10&page='+(page+1))).json();
+			const data = await (await fetch('https://e621.net/posts.json?tags=randseed:'+randSeed+' '+(urlParams.get('tags') ?? '')+' -gore%20-scat%20-watersports%20-young%20-loli%20-shota%20type:webm%20-rating:safe&limit=10&page='+(page+1))).json();
 
 			let returnData = [];
 
@@ -142,6 +144,7 @@
 				if (!post.sample.alternates.original.urls[1]) return;
 
 				if (post.tags.artist.indexOf('sound_warning') > -1) post.tags.artist.splice(post.tags.artist.indexOf('sound_warning'), 1);
+				if (post.tags.artist.indexOf('third-party_edit') > -1) post.tags.artist.splice(post.tags.artist.indexOf('third-party_edit'), 1);
 
 				returnData.push({
 					video: post.sample.alternates.original.urls[1],
