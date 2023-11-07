@@ -126,6 +126,7 @@
 		let currentPlayerTime = 0;
 		let lastPlayed = 0;
 		let page = 0;
+		let allowLoad = true;
 
 		const randSeed = Math.floor(Math.random() * 10000000000000000);
 
@@ -134,6 +135,10 @@
 		player.addEventListener('timeupdate', timeUpdate, false);
 
 		async function queryAPI(page, tags) {
+			if (!allowLoad) return;
+
+			allowLoad = false;
+
 			const urlParams = new URLSearchParams(window.location.search);
 
 			const data = await (await fetch('https://e621.net/posts.json?tags=randseed:'+randSeed+' '+(urlParams.get('tags') ?? '')+' -gore%20-scat%20-watersports%20-young%20-loli%20-shota%20type:webm%20-rating:safe&limit=10&page='+(page+1))).json();
@@ -154,6 +159,8 @@
 					favourites: post.fav_count
 				});
 			}
+
+			allowLoad = true;
 
 			return returnData;
 		}
