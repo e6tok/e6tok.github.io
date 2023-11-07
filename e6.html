@@ -125,34 +125,9 @@
 		player.addEventListener('timeupdate', timeUpdate, false);
 
 		async function queryAPI(page, tags) {
-			/*const testData = [
-				{
-					video: "test1.mp4",
-					thumb: "test1.png",
-					author: "Swag123",
-					score: 56,
-					favourites: 58
-				},
-				{
-					video: "test2.mp4",
-					thumb: "test2.png",
-					author: "MyNameJeff",
-					score: 12,
-					favourites: 7
-				},
-				{
-					video: "test3.mp4",
-					thumb: "test3.png",
-					author: "Saasdf",
-					score: 1,
-					favourites: 23
-				}
-			];*/
-
 			const urlParams = new URLSearchParams(window.location.search);
 
 			const data = await (await fetch('https://e621.net/posts.json?tags='+(urlParams.get('tags') ?? '')+' -gore%20-scat%20-watersports%20-young%20-loli%20-shota%20type:webm%20-rating:safe&limit=10&page='+(page+1))).json();
-			//const data = await (await fetch('https://e621.net/posts.json?tags=order:random -gore%20-scat%20-watersports%20-young%20-loli%20-shota%20type:webm%20-rating:safe&limit=10&page='+page)).json();
 
 			let returnData = [];
 
@@ -215,8 +190,6 @@
 					const current = document.getElementsByClassName("current")[0];
 
 					if (currentId != i) {
-						console.log('active',i)
-
 						current.classList.remove("current");
 						video.classList.add("current");
 
@@ -244,8 +217,6 @@
 				
 				if (previousOffset == 0 && thisOffset == window.innerHeight) {
 					done = true;
-
-					console.log('play',i)
 
 					videoContainer.classList.remove("show");
 					playerContainer.classList.remove("hide");
