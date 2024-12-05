@@ -26,7 +26,19 @@
 	}
 
 	#player_container video.hide {
-		opacity: 0;
+		display: none;
+	}
+
+	#player_container #gif {
+		width: 100%;
+		height: 100%;
+		background-position: center;
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+
+	#gif_container img.hide {
+		display: none;
 	}
 
 	#video_container {
@@ -58,12 +70,40 @@
 		background: transparent !important;
 	}
 
+	.tags {
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		padding: 20px;
+		z-index: 999;
+	}
+
+	.tags .dialog {
+		box-sizing: border-box;
+		background-color: #222;
+		color: #eee;
+		overflow-y: scroll;
+		width: 100%;
+		height: 100%;
+		padding: 20px;
+		border-radius: 10px;
+	}
+
+	.tags .dialog ul {
+		list-style-type: none;
+	}
+
+	.tags .dialog a {
+		color: #eee;
+	}
+
 	.ui {
 		display: flex;
 		align-items: stretch;
 		height: 100%;
 		flex-direction: column;
-		opacity: 0.5;
+		opacity: 0.3;
 	}
 
 	.ui input[type=range] {
@@ -85,7 +125,7 @@
 		color: white;
 		text-shadow: 0px 0px 5px black;
 		display: flex;
-		align-items: center;
+		align-items: end;
   		justify-content: center;
 	}
 
@@ -105,12 +145,13 @@
 		color: white;
 		text-shadow: 0px 0px 5px black;
 		margin: 10px;
-	}	
+	}
 </style>
 </head>
 <body onpointerdown="onScrollStart()" onpointerup="onScrollFinish()">
 	<div id="player_container">
-		<video autoplay loop muted playsinline>
+		<video autoplay loop muted playsinline></video>
+		<div id="gif">
 	</div>
 	<div id="video_container">
 	</div>
@@ -119,6 +160,7 @@
 		const videoContainer = document.getElementById("video_container");
 		const playerContainer = document.getElementById("player_container");
 		const player = playerContainer.getElementsByTagName('video')[0];
+		const gifPlayer = document.getElementById("gif");
 
 		let currentId = 0;
 		let videosOnPage = 0;
@@ -141,22 +183,29 @@
 
 			const urlParams = new URLSearchParams(window.location.search);
 
-			const data = await (await fetch('https://e621.net/posts.json?tags=randseed:'+randSeed+' '+(urlParams.get('tags') ?? '')+' -gore%20-scat%20-watersports%20-young%20-loli%20-shota%20type:webm%20-rating:safe&limit=10&page='+(page+1))).json();
+			const data = await (await fetch('https://e621.net/posts.json?tags=randseed:'+randSeed+' '+(urlParams.get('tags') ?? '')+' -gore -scat -watersports -young -loli -shota animated -rating:safe&limit=10&page='+(page+1))).json();
 
 			let returnData = [];
 
 			for (const post of data.posts) {
-				if (!post.sample.alternates.original.urls[1]) return;
+				if (!post.file.url) return;
 
 				if (post.tags.artist.indexOf('sound_warning') > -1) post.tags.artist.splice(post.tags.artist.indexOf('sound_warning'), 1);
 				if (post.tags.artist.indexOf('third-party_edit') > -1) post.tags.artist.splice(post.tags.artist.indexOf('third-party_edit'), 1);
-
+				if (post.tags.artist.indexOf('conditional_dnp') > -1) post.tags.artist.splice(post.tags.artist.indexOf('conditional_dnp'), 1);
+				if (post.tags.artist.indexOf('ai_assisted') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_assisted'), 1);
+				if (post.tags.artist.indexOf('ai_generated_background') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_generated_background'), 1);
+				if (post.tags.artist.indexOf('ai_generated_audio') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_generated_audio'), 1);
+				if (post.tags.artist.indexOf('ai_generated_reference') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_generated_reference'), 1);
+				
 				returnData.push({
-					video: post.sample.alternates.original.urls[1],
+					video: post?.sample?.alternates?.original?.urls[1] || post.file.url,
 					thumb: post.preview.url,
 					author: post.tags.artist.join(', '),
 					score: post.score.total,
-					favourites: post.fav_count
+					favourites: post.fav_count,
+					ext: post.file.ext,
+					tags: post.tags
 				});
 			}
 
@@ -222,7 +271,18 @@
 
 						const newSrc = video.dataset.video + "#t=" + t.toString();
 
-						if (!(player.src.endsWith(newSrc))) player.src = newSrc;
+						if (video.dataset.ext === "gif") {
+							if (!(gifPlayer.style.backgroundImage.endsWith(newSrc))) {
+								gifPlayer.style.backgroundImage = "";
+								gifPlayer.style.backgroundImage = `url(${newSrc}`;
+							}
+							gifPlayer.classList.remove("hide");
+							player.classList.add("hide");
+						} else {
+							if (!(player.src.endsWith(newSrc))) player.src = newSrc;
+							gifPlayer.classList.add("hide");
+							player.classList.remove("hide");
+						}
 
 						player.pause();
 
@@ -238,7 +298,7 @@
 					videoContainer.classList.remove("show");
 					playerContainer.classList.remove("hide");
 
-					if (player.paused) {
+					if (player.paused && video.dataset.ext !== "gif") {
 						player.play();
 					}
 
@@ -260,12 +320,21 @@
 			element.classList.add("video");
 			element.style.backgroundImage = "url(" + videoInfo.thumb + ")";
 			element.dataset.video = videoInfo.video;
+			element.dataset.ext = videoInfo.ext;
 			element.id = "video_" + videosOnPage;
 
+			const tagsHtml = Object.keys(videoInfo.tags).map(category => `<h3>${category}</h3><ul>${videoInfo.tags[category].map(tag => `<li><a target="_blank" href="https://e621.net/posts?tags=${tag}">${tag}</a></li>`).join('')}</ul>`).join('');
+
 			element.innerHTML = `
+			<div class="tags" id="tags_${videosOnPage}" style="display:none">
+				<div class="dialog">
+					<h2 style="margin:0;text-align:right;cursor:pointer" onclick="document.getElementById('tags_${videosOnPage}').style.display='none'">&#10060;</h2>
+					${tagsHtml}
+				</div>
+			</div>
 			<div class="ui">
 				<div class="top">
-					<div class="left" onclick="playPause()"></div>
+					<div class="left"${videoInfo.ext !== "gif" ? 'onclick="playPause()"' : ""}></div>
 					<div class="right">
 						<div class="buttons">
 							<div class="button">
@@ -276,16 +345,16 @@
 								<div class="icon">&starf;</div>
 								<div class="number">${videoInfo.favourites}</div>
 							</div>
-							<div class="button" onclick="player.webkitEnterFullScreen();player.play();">
+							${videoInfo.ext !== "gif" ? `<div class="button" onclick="player.webkitEnterFullScreen();player.play();">
 								<div class="icon">&#x2922;</div>
 								<div class="number">Full</div>
-							</div>
+							</div>` : ""}
 						</div>
 					</div>
 				</div>
 				<div class="bottom">
-					${videoInfo.author}<br>
-					<input type="range" min="0" max="100" step="1" class="progress" oninput="moveProgressBar(this)">
+					${videoInfo.author} &bull; <u onclick="document.getElementById('tags_${videosOnPage}').style.display='block'" style="cursor:pointer">Tags</u><br>
+					${videoInfo.ext !== "gif" ? '<input type="range" min="0" max="100" step="1" class="progress" oninput="moveProgressBar(this)">' : ""}
 				</div>
 			</div>
 			`;
@@ -306,7 +375,16 @@
 				appendVideoElement(videoInfo[i]);
 			}
 
-			if (page == 0) player.src = videoInfo[0].video;
+			if (page == 0) {
+				if (videoInfo[0].ext !== "gif") {
+					player.src = videoInfo[0].video;
+					player.play();
+				} else {
+					gifPlayer.style.backgroundImage = `url(${videoInfo[0].video})`;
+					gifPlayer.classList.remove("hide");
+					player.classList.add("hide");
+				}
+			}
 
 			page++;
 		}
@@ -314,7 +392,9 @@
 		function timeUpdate() {
 			const currentVideo = document.getElementsByClassName("current")[0];
 
-			currentVideo.getElementsByClassName("progress")[0].value = player.currentTime / player.duration * 100;
+			const progress = currentVideo.getElementsByClassName("progress")[0];
+
+			if (progress) progress.value = player.currentTime / player.duration * 100;
 		}
 
 		function moveProgressBar(me) {
