@@ -2,11 +2,18 @@
 <head>
 <meta name="theme-color" content="#000">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon-192x192.png">
 <style>
-	body {
+	html, body {
+		overflow: hidden;
+		height: 100%;
 		margin: 0;
-		font-family: sans-serif;
+		padding: 0;
 		background: black;
+		font-family: sans-serif;
 	}
 
 	::-webkit-scrollbar {
@@ -145,6 +152,7 @@
 		color: white;
 		text-shadow: 0px 0px 5px black;
 		margin: 10px;
+		margin-bottom: 30px;
 	}
 </style>
 </head>
@@ -157,12 +165,19 @@
 	</div>
 
 	<script>
+		window.addEventListener('orientationchange', function() {
+			if (event.target.screen.orientation.angle !== 0 && event.target.screen.orientation.angle !== 180) {
+				document.getElementById(`video_${previousId}`).scrollIntoView();
+			}
+		});
+
 		const videoContainer = document.getElementById("video_container");
 		const playerContainer = document.getElementById("player_container");
 		const player = playerContainer.getElementsByTagName('video')[0];
 		const gifPlayer = document.getElementById("gif");
 
 		let currentId = 0;
+		let previousId = 0;
 		let videosOnPage = 0;
 		let scrolling = false;
 		let currentPlayerTime = 0;
@@ -197,6 +212,7 @@
 				if (post.tags.artist.indexOf('ai_generated_background') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_generated_background'), 1);
 				if (post.tags.artist.indexOf('ai_generated_audio') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_generated_audio'), 1);
 				if (post.tags.artist.indexOf('ai_generated_reference') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_generated_reference'), 1);
+				if (post.tags.artist.indexOf('jumpscare_warning') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_generated'), 1);
 				
 				returnData.push({
 					video: post?.sample?.alternates?.original?.urls[1] || post.file.url,
@@ -259,9 +275,12 @@
 						current.classList.remove("current");
 						video.classList.add("current");
 
+						previousId = currentId;
 						currentId = i;
 
-						if (currentPlayerTime <= 0.001) currentPlayerTime = player.currentTime;
+						if (currentPlayerTime <= 0.001) {
+							currentPlayerTime = player.currentTime;
+						}
 
 						let t = 0.001;
 
