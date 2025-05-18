@@ -198,24 +198,25 @@
 
 			const urlParams = new URLSearchParams(window.location.search);
 
-			const data = await (await fetch('https://e621.net/posts.json?tags=randseed:'+randSeed+' '+(urlParams.get('tags') ?? '')+' -gore -scat -watersports -young -loli -shota animated -rating:safe&limit=10&page='+(page+1))).json();
+			const blacklist = atob("LWdvcmUgLWZlY2VzIC11cmluZSAteW91bmcgLWxvbGkgLXNob3Rh");
+
+			const data = await (await fetch('https://e621.net/posts.json?tags=randseed:'+randSeed+' '+(urlParams.get('tags') ?? '')+' '+blacklist+' -flash animated -rating:safe&limit=10&page='+(page+1))).json();
 
 			let returnData = [];
 
 			for (const post of data.posts) {
 				if (!post.file.url) return;
 
-				if (post.tags.artist.indexOf('sound_warning') > -1) post.tags.artist.splice(post.tags.artist.indexOf('sound_warning'), 1);
-				if (post.tags.artist.indexOf('third-party_edit') > -1) post.tags.artist.splice(post.tags.artist.indexOf('third-party_edit'), 1);
-				if (post.tags.artist.indexOf('conditional_dnp') > -1) post.tags.artist.splice(post.tags.artist.indexOf('conditional_dnp'), 1);
-				if (post.tags.artist.indexOf('ai_assisted') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_assisted'), 1);
-				if (post.tags.artist.indexOf('ai_generated_background') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_generated_background'), 1);
-				if (post.tags.artist.indexOf('ai_generated_audio') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_generated_audio'), 1);
-				if (post.tags.artist.indexOf('ai_generated_reference') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_generated_reference'), 1);
-				if (post.tags.artist.indexOf('jumpscare_warning') > -1) post.tags.artist.splice(post.tags.artist.indexOf('ai_generated'), 1);
-				
+				const hiddenArtists = ["sound_warning", "third-party_edit", "conditional_dnp", "ai_assisted", "ai_generated_background", "ai_generated_audio", "ai_generated_reference", "jumpscare_warning"];
+
+				for (const artist of hiddenArtists) {
+					if (post.tags.artist.indexOf(artist) > -1) {
+						post.tags.artist.splice(post.tags.artist.indexOf(artist), 1);
+					}
+				}
+
 				returnData.push({
-					video: post?.sample?.alternates?.original?.urls[1] || post.file.url,
+					video: post?.sample?.alternates?.variants?.mp4?.url || post.file.url,
 					thumb: post.preview.url,
 					author: post.tags.artist.join(', '),
 					score: post.score.total,
