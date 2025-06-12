@@ -191,6 +191,8 @@
 		videoContainer.addEventListener('resize', checkScroll, false);
 		player.addEventListener('timeupdate', timeUpdate, false);
 
+		const urlParams = new URLSearchParams(window.location.search);
+
 		const domain = urlParams.get('site') || "https://e621.net";
 
 		async function queryAPI(page, tags) {
@@ -198,11 +200,9 @@
 
 			allowLoad = false;
 
-			const urlParams = new URLSearchParams(window.location.search);
-
 			const blacklist = atob("LWdvcmUgLWZlY2VzIC11cmluZSAteW91bmcgLWxvbGkgLXNob3Rh");
 
-			const data = await (await fetch(domain+'/posts.json?tags=randseed:'+randSeed+' '+(urlParams.get('tags') ?? '')+' '+blacklist+' -flash animated -rating:safe&limit=10&page='+(page+1))).json();
+			const data = await (await fetch(domain+'/posts.json?tags=randseed:'+randSeed+' '+(.get('tags') ?? '')+' '+blacklist+' -flash animated -rating:safe&limit=10&page='+(page+1))).json();
 
 			let returnData = [];
 
