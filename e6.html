@@ -191,6 +191,8 @@
 		videoContainer.addEventListener('resize', checkScroll, false);
 		player.addEventListener('timeupdate', timeUpdate, false);
 
+		const domain = urlParams.get('site') || "https://e621.net";
+
 		async function queryAPI(page, tags) {
 			if (!allowLoad) return;
 
@@ -200,7 +202,7 @@
 
 			const blacklist = atob("LWdvcmUgLWZlY2VzIC11cmluZSAteW91bmcgLWxvbGkgLXNob3Rh");
 
-			const data = await (await fetch('https://e621.net/posts.json?tags=randseed:'+randSeed+' '+(urlParams.get('tags') ?? '')+' '+blacklist+' -flash animated -rating:safe&limit=10&page='+(page+1))).json();
+			const data = await (await fetch(domain+'/posts.json?tags=randseed:'+randSeed+' '+(urlParams.get('tags') ?? '')+' '+blacklist+' -flash animated -rating:safe&limit=10&page='+(page+1))).json();
 
 			let returnData = [];
 
@@ -343,7 +345,7 @@
 			element.dataset.ext = videoInfo.ext;
 			element.id = "video_" + videosOnPage;
 
-			const tagsHtml = Object.keys(videoInfo.tags).map(category => `<h3>${category}</h3><ul>${videoInfo.tags[category].map(tag => `<li><a target="_blank" href="https://e621.net/posts?tags=${tag}">${tag}</a></li>`).join('')}</ul>`).join('');
+			const tagsHtml = Object.keys(videoInfo.tags).map(category => `<h3>${category}</h3><ul>${videoInfo.tags[category].map(tag => `<li><a target="_blank" href="${domain}/posts?tags=${tag}">${tag}</a></li>`).join('')}</ul>`).join('');
 
 			element.innerHTML = `
 			<div class="tags" id="tags_${videosOnPage}" style="display:none">
