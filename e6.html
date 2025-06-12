@@ -212,15 +212,22 @@
 				const hiddenArtists = ["sound_warning", "third-party_edit", "conditional_dnp", "ai_assisted", "ai_generated_background", "ai_generated_audio", "ai_generated_reference", "jumpscare_warning"];
 
 				for (const artist of hiddenArtists) {
-					if (post.tags.artist.indexOf(artist) > -1) {
-						post.tags.artist.splice(post.tags.artist.indexOf(artist), 1);
+					if (post.tags.artist) {
+						if (post.tags.artist.indexOf(artist) > -1) {
+							post.tags.artist.splice(post.tags.artist.indexOf(artist), 1);
+						}
+					}
+					if (post.tags.director) {
+						if (post.tags.director.indexOf(artist) > -1) {
+							post.tags.director.splice(post.tags.artist.indexOf(artist), 1);
+						}
 					}
 				}
 
 				returnData.push({
 					video: post?.sample?.alternates?.variants?.mp4?.url || post.file.url,
 					thumb: post.preview.url,
-					author: post.tags.artist.join(', '),
+					author: post.tags.artist?.join(', ') || post.tags.director?.join(', ') || "",
 					score: post.score.total,
 					favourites: post.fav_count,
 					ext: post.file.ext,
