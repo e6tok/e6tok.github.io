@@ -1,89 +1,123 @@
 <html>
+
 <head>
-<meta name="theme-color" content="#000">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="manifest" href="/manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="icon-192x192.png">
-<style>
-body {
-	margin: 0;
-	font-family: sans-serif;
-	background: #000;
-}
-::-webkit-scrollbar {
-    display:none;
-}
-#container {
-	scroll-snap-type: y mandatory;
-	overflow: scroll;
-	height: 100%;
-}
-.video {
-	height: 100%;
-	scroll-snap-align: start;
-	scroll-snap-stop: always;	
-	background: #111;
-}
-.video video {
-	height: 100%;
-	width: 100%;
-	background: #111;
-}
-#prompt {
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	background: black;
-	height: 100%;
-	width: 100%;
-	color: white;
-	font-size: 24px;
-}
-#prompt div {
-	margin: 0;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: 100%;
-	text-align: center;
-}
-#prompt button {
-	border-radius: 5px;
-	background: #5a0c26;
-	color: white;
-	border: 0;
-	padding: 5px;
-	font-size: 24px;
-}
-#prompt button.cta {
-	border-radius: 5px;
-	background: #C70039;
-	color: white;
-	border: 0;
-	padding: 5px;
-	width: 50%;
-	font-size: 48px;
-}
-input {
-	margin-bottom: 10px;
-	width: 80%;
-	font-size: 24px;
-}
-</style>
+	<meta name="theme-color" content="#000">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="manifest" href="/manifest.json">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<link rel="apple-touch-icon" href="icon-192x192.png">
+	<style>
+		body {
+			margin: 0;
+			font-family: sans-serif;
+			background: #000;
+		}
+
+		::-webkit-scrollbar {
+			display: none;
+		}
+
+		#container {
+			scroll-snap-type: y mandatory;
+			overflow: scroll;
+			height: 100%;
+		}
+
+		.video {
+			height: 100%;
+			scroll-snap-align: start;
+			scroll-snap-stop: always;
+			background: #111;
+		}
+
+		.video video {
+			height: 100%;
+			width: 100%;
+			background: #111;
+		}
+
+		#prompt {
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			background: black;
+			height: 100%;
+			width: 100%;
+			color: white;
+			font-size: 24px;
+		}
+
+		#prompt div {
+			margin: 0;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 100%;
+			text-align: center;
+		}
+
+		#prompt button {
+			border-radius: 5px;
+			background: #5a0c26;
+			color: white;
+			border: 0;
+			padding: 5px;
+			font-size: 24px;
+		}
+
+		#prompt button.cta {
+			border-radius: 5px;
+			background: #C70039;
+			color: white;
+			border: 0;
+			padding: 5px;
+			width: 50%;
+			font-size: 48px;
+		}
+
+		input {
+			margin-bottom: 10px;
+			width: 80%;
+			font-size: 24px;
+		}
+
+		select {
+			border-radius: 5px;
+			border: 0;
+			padding: 5px;
+			font-size: 24px;
+		}
+	</style>
+	<script>
+		function navigate(otherTags) {
+			const website = document.getElementById("website").value;
+			const tags = document.getElementById("tags").value;
+
+			window.location.href = "/e6.html?tags=" + encodeURIComponent(tags + " " + otherTags) + "&site=" + encodeURIComponent(website);
+		}
+	</script>
 </head>
+
 <body>
-<div id="container">
-</div>
-<div id="prompt">
-<div>
-<input type="text" id="tags"><br>
-<button onclick="window.location.href='e6.html?tags='+document.getElementById('tags').value" class="cta">Go E6</button><br><br>
-<button onclick="window.location.href='e6.html?tags=order:score '+document.getElementById('tags').value">Score</button> <button onclick="window.location.href='e6.html?tags=order:random '+document.getElementById('tags').value">Random</button>
-<!--button onclick="window.location.href='r3.html?tags='+document.getElementById('tags').value">Go R3</button-->
-</div>
-</div>
+	<div id="container">
+	</div>
+	<div id="prompt">
+		<div>
+			<input type="text" id="tags"><br>
+			<button onclick="navigate('')" class="cta">Go</button><br><br>
+			<button
+				onclick="navigate('order:score')">Score</button>
+			<button
+				onclick="navigate('order:random')">Random</button>
+			<!--button onclick="window.location.href='r3.html?tags='+document.getElementById('tags').value">Go R3</button--><br><br>
+			<select id="website">
+				<option value="https://e621.net">e621.net</option>
+				<option value="https://e6ai.net">e6ai.net</option>
+			</select>
+		</div>
+	</div>
 </body>
+
 </html>

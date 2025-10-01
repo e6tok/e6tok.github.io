@@ -1,438 +1,442 @@
 <html>
+
 <head>
-<meta name="theme-color" content="#000">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="manifest" href="/manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="icon-192x192.png">
-<style>
-	html, body {
-		overflow: hidden;
-		height: 100%;
-		margin: 0;
-		padding: 0;
-		background: black;
-		font-family: sans-serif;
-	}
+	<meta name="theme-color" content="#000">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="manifest" href="/manifest.json">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<link rel="apple-touch-icon" href="icon-192x192.png">
+	<style>
+		html,
+		body {
+			overflow: hidden;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			background: black;
+			font-family: sans-serif;
+		}
 
-	::-webkit-scrollbar {
-		display: none;
-	}
+		::-webkit-scrollbar {
+			display: none;
+		}
 
-	#player_container {
-		width: 100%;
-		height: 100%;
-		position: fixed;
-		background: black;
-	}
+		#player_container {
+			width: 100%;
+			height: 100%;
+			position: fixed;
+			background: black;
+		}
 
-	#player_container video {
-		width: 100%;
-		height: 100%;
-	}
+		#player_container video {
+			width: 100%;
+			height: 100%;
+		}
 
-	#player_container video.hide {
-		display: none;
-	}
+		#player_container video.hide {
+			display: none;
+		}
 
-	#player_container #gif {
-		width: 100%;
-		height: 100%;
-		background-position: center;
-		background-size: contain;
-		background-repeat: no-repeat;
-	}
+		#player_container #gif {
+			width: 100%;
+			height: 100%;
+			background-position: center;
+			background-size: contain;
+			background-repeat: no-repeat;
+		}
 
-	#gif_container img.hide {
-		display: none;
-	}
+		#gif_container img.hide {
+			display: none;
+		}
 
-	#video_container {
-		scroll-snap-type: y mandatory;
-		overflow: scroll;
-		height: 100%;
-		position: absolute;
-		top: 0;
-		width: 100%;
-	}
+		#video_container {
+			scroll-snap-type: y mandatory;
+			overflow: scroll;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			width: 100%;
+		}
 
-	#video_container video {
-		width: 100%;
-		height: 100%;
-	}
+		#video_container video {
+			width: 100%;
+			height: 100%;
+		}
 
-	.video {
-		height: 100%;
-		width: 100%;
-		scroll-snap-align: start;
-		scroll-snap-stop: always;	
-		background: black;
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: contain;
-	}
+		.video {
+			height: 100%;
+			width: 100%;
+			scroll-snap-align: start;
+			scroll-snap-stop: always;
+			background: black;
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
 
-	#video_container:not(.show) .video {
-		background: transparent !important;
-	}
+		#video_container:not(.show) .video {
+			background: transparent !important;
+		}
 
-	.tags {
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		padding: 20px;
-		z-index: 999;
-	}
+		.tags {
+			box-sizing: border-box;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			padding: 20px;
+			z-index: 999;
+		}
 
-	.tags .dialog {
-		box-sizing: border-box;
-		background-color: #222;
-		color: #eee;
-		overflow-y: scroll;
-		width: 100%;
-		height: 100%;
-		padding: 20px;
-		border-radius: 10px;
-	}
+		.tags .dialog {
+			box-sizing: border-box;
+			background-color: #222;
+			color: #eee;
+			overflow-y: scroll;
+			width: 100%;
+			height: 100%;
+			padding: 20px;
+			border-radius: 10px;
+		}
 
-	.tags .dialog ul {
-		list-style-type: none;
-	}
+		.tags .dialog ul {
+			list-style-type: none;
+		}
 
-	.tags .dialog a {
-		color: #eee;
-	}
+		.tags .dialog a {
+			color: #eee;
+		}
 
-	.ui {
-		display: flex;
-		align-items: stretch;
-		height: 100%;
-		flex-direction: column;
-		opacity: 0.3;
-	}
+		.ui {
+			display: flex;
+			align-items: stretch;
+			height: 100%;
+			flex-direction: column;
+			opacity: 0.3;
+		}
 
-	.ui input[type=range] {
-		width: 100%;
-		margin: 0px;
-	}
+		.ui input[type=range] {
+			width: 100%;
+			margin: 0px;
+		}
 
-	.ui .top {
-		flex: 1;
-		display: flex;
-		flex-direction: row;
-	}
+		.ui .top {
+			flex: 1;
+			display: flex;
+			flex-direction: row;
+		}
 
-	.ui .left {
-		flex: 1;
-	}
+		.ui .left {
+			flex: 1;
+		}
 
-	.ui .right {
-		color: white;
-		text-shadow: 0px 0px 5px black;
-		display: flex;
-		align-items: end;
-  		justify-content: center;
-	}
+		.ui .right {
+			color: white;
+			text-shadow: 0px 0px 5px black;
+			display: flex;
+			align-items: end;
+			justify-content: center;
+		}
 
-	.ui .right .buttons {
-		margin: 0 10px;
-	}
+		.ui .right .buttons {
+			margin: 0 10px;
+		}
 
-	.ui .right .buttons .button {
-		text-align: center;
-	}
+		.ui .right .buttons .button {
+			text-align: center;
+		}
 
-	.ui .right .buttons .button .icon {
-		font-size: 32px;
-	}
-	
-	.ui .bottom {
-		color: white;
-		text-shadow: 0px 0px 5px black;
-		margin: 10px;
-		margin-bottom: 30px;
-	}
-</style>
+		.ui .right .buttons .button .icon {
+			font-size: 32px;
+		}
+
+		.ui .bottom {
+			color: white;
+			text-shadow: 0px 0px 5px black;
+			margin: 10px;
+			margin-bottom: 30px;
+		}
+	</style>
 </head>
+
 <body onpointerdown="onScrollStart()" onpointerup="onScrollFinish()">
 	<div id="player_container">
 		<video autoplay loop muted playsinline></video>
 		<div id="gif">
-	</div>
-	<div id="video_container">
-	</div>
+		</div>
+		<div id="video_container">
+		</div>
 
-	<script>
-		window.addEventListener('orientationchange', function() {
-			if (event.target.screen.orientation.angle !== 0 && event.target.screen.orientation.angle !== 180) {
-				document.getElementById(`video_${previousId}`).scrollIntoView();
-			}
-		});
-
-		const videoContainer = document.getElementById("video_container");
-		const playerContainer = document.getElementById("player_container");
-		const player = playerContainer.getElementsByTagName('video')[0];
-		const gifPlayer = document.getElementById("gif");
-
-		let currentId = 0;
-		let previousId = 0;
-		let videosOnPage = 0;
-		let scrolling = false;
-		let currentPlayerTime = 0;
-		let lastPlayed = 0;
-		let page = 0;
-		let allowLoad = true;
-
-		const randSeed = Math.floor(Math.random() * 10000000000000000);
-
-		videoContainer.addEventListener('scroll', checkScroll, false);
-		videoContainer.addEventListener('resize', checkScroll, false);
-		player.addEventListener('timeupdate', timeUpdate, false);
-
-		const urlParams = new URLSearchParams(window.location.search);
-
-		const domain = urlParams.get('site') || "https://e621.net";
-
-		async function queryAPI(page, tags) {
-			if (!allowLoad) return;
-
-			allowLoad = false;
-
-			const blacklist = atob("LWdvcmUgLWZlY2VzIC11cmluZSAteW91bmcgLWxvbGkgLXNob3Rh");
-
-			const data = await (await fetch(domain+'/posts.json?tags=randseed:'+randSeed+' '+(urlParams.get('tags') ?? '')+' '+blacklist+' -flash animated -rating:safe&limit=10&page='+(page+1))).json();
-
-			let returnData = [];
-
-			for (const post of data.posts) {
-				if (!post.file.url) return;
-
-				const hiddenArtists = ["sound_warning", "third-party_edit", "conditional_dnp", "ai_assisted", "ai_generated_background", "ai_generated_audio", "ai_generated_reference", "jumpscare_warning"];
-
-				for (const artist of hiddenArtists) {
-					if (post.tags.artist) {
-						if (post.tags.artist.indexOf(artist) > -1) {
-							post.tags.artist.splice(post.tags.artist.indexOf(artist), 1);
-						}
-					}
-					if (post.tags.director) {
-						if (post.tags.director.indexOf(artist) > -1) {
-							post.tags.director.splice(post.tags.artist.indexOf(artist), 1);
-						}
-					}
+		<script>
+			window.addEventListener('orientationchange', function () {
+				if (event.target.screen.orientation.angle !== 0 && event.target.screen.orientation.angle !== 180) {
+					document.getElementById(`video_${previousId}`).scrollIntoView();
 				}
+			});
 
-				returnData.push({
-					video: post?.sample?.alternates?.variants?.mp4?.url || post.file.url,
-					thumb: post.preview.url,
-					author: post.tags.artist?.join(', ') || post.tags.director?.join(', ') || "",
-					score: post.score.total,
-					favourites: post.fav_count,
-					ext: post.file.ext,
-					tags: post.tags
-				});
-			}
+			const videoContainer = document.getElementById("video_container");
+			const playerContainer = document.getElementById("player_container");
+			const player = playerContainer.getElementsByTagName('video')[0];
+			const gifPlayer = document.getElementById("gif");
 
-			allowLoad = true;
+			let currentId = 0;
+			let previousId = 0;
+			let videosOnPage = 0;
+			let scrolling = false;
+			let currentPlayerTime = 0;
+			let lastPlayed = 0;
+			let page = 0;
+			let allowLoad = true;
 
-			return returnData;
-		}
+			const randSeed = Math.floor(Math.random() * 10000000000000000);
 
-		function onScrollStart() {
-			
-		}
+			videoContainer.addEventListener('scroll', checkScroll, false);
+			videoContainer.addEventListener('resize', checkScroll, false);
+			player.addEventListener('timeupdate', timeUpdate, false);
 
-		function onScrollFinish() {
-			if (scrolling) return;
+			const urlParams = new URLSearchParams(window.location.search);
 
-			videoContainer.classList.remove("show");
-			playerContainer.classList.remove("hide");
-		}	
+			const domain = urlParams.get('site') || "https://e621.net";
 
-		function playPause() {
-			if (player.muted) player.muted = false;
-			else if (player.paused) player.play();
-			else player.pause();
-		}
+			async function queryAPI(page, tags) {
+				if (!allowLoad) return;
 
-		function checkScroll() {	
-			scrolling = true;
+				allowLoad = false;
 
-			videoContainer.classList.add("show");
-			playerContainer.classList.add("hide");
+				const blacklist = atob("LWdvcmUgLWZlY2VzIC11cmluZSAteW91bmcgLWxvbGkgLXNob3Rh");
 
-			const videos = document.getElementsByClassName("video");
-			
-			let done = false;
+				const data = await (await fetch(domain + '/posts.json?tags=randseed:' + randSeed + ' ' + (urlParams.get('tags') ?? '') + ' ' + blacklist + ' -flash animated -rating:safe&limit=10&page=' + (page + 1))).json();
 
-			let previousOffset = 0;
+				let returnData = [];
 
-			for (let i = 0; i < videos.length; i++) {
-				const video = videos[i];
+				for (const post of data.posts) {
+					if (!post.file.url) return;
 
-				const y = video.offsetTop, w = video.offsetWidth, h = video.offsetHeight, b = y + h;
-				
-				const thisOffset = Math.max(0, Math.min(h, videoContainer.scrollTop + videoContainer.scrollHeight - y, b - videoContainer.scrollTop));
-				
-				if (thisOffset > (window.innerHeight / 2) && !done) {
-					done = true;
+					const hiddenArtists = ["sound_warning", "third-party_edit", "conditional_dnp", "ai_assisted", "ai_generated_background", "ai_generated_audio", "ai_generated_reference", "jumpscare_warning", "avoid_posting"];
 
-					const current = document.getElementsByClassName("current")[0];
-
-					if (currentId != i) {
-						current.classList.remove("current");
-						video.classList.add("current");
-
-						previousId = currentId;
-						currentId = i;
-
-						if (currentPlayerTime <= 0.001) {
-							currentPlayerTime = player.currentTime;
-						}
-
-						let t = 0.001;
-
-						if (lastPlayed == i) {
-							t = currentPlayerTime;
-						}
-
-						const newSrc = video.dataset.video + "#t=" + t.toString();
-
-						if (video.dataset.ext === "gif") {
-							if (!(gifPlayer.style.backgroundImage.endsWith(newSrc))) {
-								gifPlayer.style.backgroundImage = "";
-								gifPlayer.style.backgroundImage = `url(${newSrc}`;
+					for (const artist of hiddenArtists) {
+						if (post.tags.artist) {
+							if (post.tags.artist.indexOf(artist) > -1) {
+								post.tags.artist.splice(post.tags.artist.indexOf(artist), 1);
 							}
-							gifPlayer.classList.remove("hide");
-							player.classList.add("hide");
-						} else {
-							if (!(player.src.endsWith(newSrc))) player.src = newSrc;
-							gifPlayer.classList.add("hide");
-							player.classList.remove("hide");
 						}
-
-						player.pause();
-
-						if (videos.length - i < 5) {
-							getVideosAndAppend();
+						if (post.tags.director) {
+							if (post.tags.director.indexOf(artist) > -1) {
+								post.tags.director.splice(post.tags.artist.indexOf(artist), 1);
+							}
 						}
 					}
-				}
-				
-				if (previousOffset == 0 && thisOffset == window.innerHeight) {
-					done = true;
 
-					videoContainer.classList.remove("show");
-					playerContainer.classList.remove("hide");
-
-					if (player.paused && video.dataset.ext !== "gif") {
-						player.play();
-					}
-
-					lastPlayed = i;
-					currentPlayerTime = 0;
-
-					scrolling = false;
+					returnData.push({
+						video: post?.sample?.alternates?.variants?.mp4?.url || post.file.url,
+						thumb: post.preview.url,
+						author: post.tags.artist?.join(', ') || post.tags.director?.join(', ') || "",
+						score: post.score.total,
+						favourites: post.fav_count,
+						ext: post.file.ext,
+						tags: post.tags
+					});
 				}
 
-				previousOffset = thisOffset;
+				allowLoad = true;
 
-				if (done) break;
+				return returnData;
 			}
-		}
 
-		function appendVideoElement(videoInfo) {
-			const element = document.createElement('div');
+			function onScrollStart() {
 
-			element.classList.add("video");
-			element.style.backgroundImage = "url(" + videoInfo.thumb + ")";
-			element.dataset.video = videoInfo.video;
-			element.dataset.ext = videoInfo.ext;
-			element.id = "video_" + videosOnPage;
+			}
 
-			const tagsHtml = Object.keys(videoInfo.tags).map(category => `<h3>${category}</h3><ul>${videoInfo.tags[category].map(tag => `<li><a target="_blank" href="${domain}/posts?tags=${tag}">${tag}</a></li>`).join('')}</ul>`).join('');
+			function onScrollFinish() {
+				if (scrolling) return;
 
-			element.innerHTML = `
-			<div class="tags" id="tags_${videosOnPage}" style="display:none">
-				<div class="dialog">
-					<h2 style="margin:0;text-align:right;cursor:pointer" onclick="document.getElementById('tags_${videosOnPage}').style.display='none'">&#10060;</h2>
-					${tagsHtml}
-				</div>
-			</div>
-			<div class="ui">
-				<div class="top">
-					<div class="left"${videoInfo.ext !== "gif" ? 'onclick="playPause()"' : ""}></div>
-					<div class="right">
-						<div class="buttons">
-							<div class="button">
-								<div class="icon" style="transform: rotate(270deg)">&#10132;</div>
-								<div class="number">${videoInfo.score}</div>
-							</div>
-							<div class="button">
-								<div class="icon">&starf;</div>
-								<div class="number">${videoInfo.favourites}</div>
-							</div>
-							${videoInfo.ext !== "gif" ? `<div class="button" onclick="player.webkitEnterFullScreen();player.play();">
-								<div class="icon">&#x2922;</div>
-								<div class="number">Full</div>
-							</div>` : ""}
+				videoContainer.classList.remove("show");
+				playerContainer.classList.remove("hide");
+			}
+
+			function playPause() {
+				if (player.muted) player.muted = false;
+				else if (player.paused) player.play();
+				else player.pause();
+			}
+
+			function checkScroll() {
+				scrolling = true;
+
+				videoContainer.classList.add("show");
+				playerContainer.classList.add("hide");
+
+				const videos = document.getElementsByClassName("video");
+
+				let done = false;
+
+				let previousOffset = 0;
+
+				for (let i = 0; i < videos.length; i++) {
+					const video = videos[i];
+
+					const y = video.offsetTop, w = video.offsetWidth, h = video.offsetHeight, b = y + h;
+
+					const thisOffset = Math.max(0, Math.min(h, videoContainer.scrollTop + videoContainer.scrollHeight - y, b - videoContainer.scrollTop));
+
+					if (thisOffset > (window.innerHeight / 2) && !done) {
+						done = true;
+
+						const current = document.getElementsByClassName("current")[0];
+
+						if (currentId != i) {
+							current.classList.remove("current");
+							video.classList.add("current");
+
+							previousId = currentId;
+							currentId = i;
+
+							if (currentPlayerTime <= 0.001) {
+								currentPlayerTime = player.currentTime;
+							}
+
+							let t = 0.001;
+
+							if (lastPlayed == i) {
+								t = currentPlayerTime;
+							}
+
+							const newSrc = video.dataset.video + "#t=" + t.toString();
+
+							if (video.dataset.ext === "gif") {
+								if (!(gifPlayer.style.backgroundImage.endsWith(newSrc))) {
+									gifPlayer.style.backgroundImage = "";
+									gifPlayer.style.backgroundImage = `url(${newSrc}`;
+								}
+								gifPlayer.classList.remove("hide");
+								player.classList.add("hide");
+							} else {
+								if (!(player.src.endsWith(newSrc))) player.src = newSrc;
+								gifPlayer.classList.add("hide");
+								player.classList.remove("hide");
+							}
+
+							player.pause();
+
+							if (videos.length - i < 5) {
+								getVideosAndAppend();
+							}
+						}
+					}
+
+					if (previousOffset == 0 && thisOffset == window.innerHeight) {
+						done = true;
+
+						videoContainer.classList.remove("show");
+						playerContainer.classList.remove("hide");
+
+						if (player.paused && video.dataset.ext !== "gif") {
+							player.play();
+						}
+
+						lastPlayed = i;
+						currentPlayerTime = 0;
+
+						scrolling = false;
+					}
+
+					previousOffset = thisOffset;
+
+					if (done) break;
+				}
+			}
+
+			function appendVideoElement(videoInfo) {
+				const element = document.createElement('div');
+
+				element.classList.add("video");
+				element.style.backgroundImage = "url(" + videoInfo.thumb + ")";
+				element.dataset.video = videoInfo.video;
+				element.dataset.ext = videoInfo.ext;
+				element.id = "video_" + videosOnPage;
+
+				const tagsHtml = Object.keys(videoInfo.tags).map(category => `<h3>${category}</h3><ul>${videoInfo.tags[category].map(tag => `<li><a target="_blank" href="${domain}/posts?tags=${tag}">${tag}</a></li>`).join('')}</ul>`).join('');
+
+				element.innerHTML = `
+					<div class="tags" id="tags_${videosOnPage}" style="display:none">
+						<div class="dialog">
+							<h2 style="margin:0;text-align:right;cursor:pointer" onclick="document.getElementById('tags_${videosOnPage}').style.display='none'">&#10060;</h2>
+							${tagsHtml}
 						</div>
 					</div>
-				</div>
-				<div class="bottom">
-					${videoInfo.author} &bull; <u onclick="document.getElementById('tags_${videosOnPage}').style.display='block'" style="cursor:pointer">Tags</u><br>
-					${videoInfo.ext !== "gif" ? '<input type="range" min="0" max="100" step="1" class="progress" oninput="moveProgressBar(this)">' : ""}
-				</div>
-			</div>
-			`;
+					<div class="ui">
+						<div class="top">
+							<div class="left"${videoInfo.ext !== "gif" ? 'onclick="playPause()"' : ""}></div>
+							<div class="right">
+								<div class="buttons">
+									<div class="button">
+										<div class="icon" style="transform: rotate(270deg)">&#10132;</div>
+										<div class="number">${videoInfo.score}</div>
+									</div>
+									<div class="button">
+										<div class="icon">&starf;</div>
+										<div class="number">${videoInfo.favourites}</div>
+									</div>
+									${videoInfo.ext !== "gif" ? `<div class="button" onclick="player.webkitEnterFullScreen();player.play();">
+										<div class="icon">&#x2922;</div>
+										<div class="number">Full</div>
+									</div>` : ""}
+								</div>
+							</div>
+						</div>
+						<div class="bottom">
+							${videoInfo.author} &bull; <u onclick="document.getElementById('tags_${videosOnPage}').style.display='block'" style="cursor:pointer">Tags</u><br>
+							${videoInfo.ext !== "gif" ? '<input type="range" min="0" max="100" step="1" class="progress" oninput="moveProgressBar(this)">' : ""}
+						</div>
+					</div>
+				`;
 
-			if (videosOnPage == 0) {
-				element.classList.add("current");
-			}
-
-			videosOnPage++;
-
-			videoContainer.appendChild(element);
-		}
-
-		async function getVideosAndAppend() {
-			const videoInfo = await queryAPI(page, "test str");
-
-			for (let i = 0; i < videoInfo.length; i++) {
-				appendVideoElement(videoInfo[i]);
-			}
-
-			if (page == 0) {
-				if (videoInfo[0].ext !== "gif") {
-					player.src = videoInfo[0].video;
-					player.play();
-				} else {
-					gifPlayer.style.backgroundImage = `url(${videoInfo[0].video})`;
-					gifPlayer.classList.remove("hide");
-					player.classList.add("hide");
+				if (videosOnPage == 0) {
+					element.classList.add("current");
 				}
+
+				videosOnPage++;
+
+				videoContainer.appendChild(element);
 			}
 
-			page++;
-		}
+			async function getVideosAndAppend() {
+				const videoInfo = await queryAPI(page, "test str");
 
-		function timeUpdate() {
-			const currentVideo = document.getElementsByClassName("current")[0];
+				for (let i = 0; i < videoInfo.length; i++) {
+					appendVideoElement(videoInfo[i]);
+				}
 
-			const progress = currentVideo.getElementsByClassName("progress")[0];
+				if (page == 0) {
+					if (videoInfo[0].ext !== "gif") {
+						player.src = videoInfo[0].video;
+						player.play();
+					} else {
+						gifPlayer.style.backgroundImage = `url(${videoInfo[0].video})`;
+						gifPlayer.classList.remove("hide");
+						player.classList.add("hide");
+					}
+				}
 
-			if (progress) progress.value = player.currentTime / player.duration * 100;
-		}
+				page++;
+			}
 
-		function moveProgressBar(me) {
-			const currentVideo = document.getElementsByClassName("current")[0];
+			function timeUpdate() {
+				const currentVideo = document.getElementsByClassName("current")[0];
 
-			player.currentTime = player.duration * (me.value / 100);
-		}
+				const progress = currentVideo.getElementsByClassName("progress")[0];
 
-		getVideosAndAppend();
-	</script>
+				if (progress) progress.value = player.currentTime / player.duration * 100;
+			}
+
+			function moveProgressBar(me) {
+				const currentVideo = document.getElementsByClassName("current")[0];
+
+				player.currentTime = player.duration * (me.value / 100);
+			}
+
+			getVideosAndAppend();
+		</script>
 </body>
+
 </html>
