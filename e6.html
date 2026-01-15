@@ -216,7 +216,7 @@
 
 					for (const artist of hiddenArtists) {
 						if (post.tags.artist) {
-							if (post.tags.artist.(artist) > -1) {
+							if (post.tags.artist.indexOf(artist) > -1) {
 								post.tags.artist.splice(post.tags.artist.indexOf(artist), 1);
 							}
 						}
@@ -441,4 +441,5 @@
 
 
 </html>
+
 
