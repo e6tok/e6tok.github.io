@@ -91,11 +91,11 @@
 		}
 	</style>
 	<script>
-		function navigate(otherTags) {
+		function navigate(extraTags) {
 			const website = document.getElementById("website").value;
 			const tags = document.getElementById("tags").value;
 
-			window.location.href = "/e6.html?tags=" + encodeURIComponent(tags + " " + otherTags) + "&site=" + encodeURIComponent(website);
+			window.location.href = "/e6.html?tags=" + encodeURIComponent(extraTags + " " + tags) + "&site=" + encodeURIComponent(website);
 		}
 	</script>
 </head>
@@ -106,7 +106,7 @@
 	<div id="prompt">
 		<div>
 			<input type="text" id="tags"><br>
-			<button onclick="navigate('')" class="cta">Go</button><br><br>
+			<button onclick="navigate('order:id_desc')" class="cta">Go</button><br><br>
 			<button
 				onclick="navigate('order:score')">Score</button>
 			<button
