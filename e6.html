@@ -209,7 +209,7 @@
 
 				let returnData = [];
 
-				for (const post of data.posts) {
+				for (const post of data) {
 					if (!post.file.url) return;
 
 					const hiddenArtists = ["sound_warning", "third-party_edit", "conditional_dnp", "ai_assisted", "ai_generated_background", "ai_generated_audio", "ai_generated_reference", "jumpscare_warning", "avoid_posting"];
