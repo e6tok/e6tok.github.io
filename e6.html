@@ -205,11 +205,11 @@
 
 				const blacklist = atob("LWdvcmUgLWZlY2VzIC11cmluZSAteW91bmcgLWxvbGkgLXNob3Rh");
 
-				const data = await (await fetch(domain + '/posts.json?tags=randseed:' + randSeed + ' ' + (urlParams.get('tags') ?? '') + ' ' + blacklist + ' -flash animated -rating:safe&limit=10&page=' + (page + 1) + '&_client=e6tok.github.io')).json();
+				const data = await (await fetch(domain + '/posts.json?tags=randseed:' + randSeed + ' ' + (urlParams.get('tags') ?? '') + ' ' + blacklist + ' -flash animated -rating:safe&limit=10&page=' + (page + 1) + '&v1=true&_client=e6tok.github.io')).json();
 
 				let returnData = [];
 
-				for (const post of data) {
+				for (const post of data.posts) {
 					if (!post.file.url) return;
 
 					const hiddenArtists = ["sound_warning", "third-party_edit", "conditional_dnp", "ai_assisted", "ai_generated_background", "ai_generated_audio", "ai_generated_reference", "jumpscare_warning", "avoid_posting"];
